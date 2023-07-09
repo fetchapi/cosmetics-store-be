@@ -1,6 +1,5 @@
 package com.nhan.model.entity.role;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,9 +19,9 @@ import org.hibernate.annotations.Where;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "roles")
+@Table(name = "cs_role")
 @Where(clause = "deleted=false")
-public class Role extends BaseEntity implements Serializable {
+public class Role extends BaseEntity {
 
 	@Id
 	@GeneratedValue(generator = "uuid2", strategy = GenerationType.IDENTITY)

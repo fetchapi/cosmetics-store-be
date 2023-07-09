@@ -1,6 +1,5 @@
 package com.nhan.model.entity.user;
 
-import java.io.Serializable;
 import java.util.UUID;
 
 import javax.persistence.*;
@@ -19,9 +18,9 @@ import org.hibernate.annotations.Where;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "users")
+@Table(name = "cs_user")
 @Where(clause = "deleted=false")
-public class AppUser extends BaseEntity implements Serializable {
+public class AppUser extends BaseEntity {
 
 	@Id
 	@GeneratedValue(generator = "uuid2", strategy = GenerationType.IDENTITY)
