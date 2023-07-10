@@ -4,6 +4,7 @@ import com.nhan.utils.JwtUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -60,6 +61,7 @@ public class SecurityConfig {
 				.antMatchers("/api/v1/users/reset-password").permitAll()
 				.antMatchers("/api/v1/auth/logout").authenticated()
 				.antMatchers("/api/v1/auth/**").permitAll()
+				.antMatchers(HttpMethod.GET, "/api/v1/product-categories").permitAll()
 				.anyRequest().authenticated()
 				.and().exceptionHandling().authenticationEntryPoint(authenticationEntryPoint)
 				.and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)

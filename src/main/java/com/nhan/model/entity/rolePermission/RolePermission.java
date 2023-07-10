@@ -15,7 +15,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "role_permission")
+@Table(name = "cs_role_permission")
 @Where(clause = "deleted=false")
 public class RolePermission extends BaseEntity {
 

@@ -1,6 +1,5 @@
 package com.nhan.model.entity.permission;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
 
@@ -21,9 +20,9 @@ import org.hibernate.annotations.Where;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "permissions")
+@Table(name = "cs_permission")
 @Where(clause = "deleted=false")
-public class Permission extends BaseEntity implements Serializable {
+public class Permission extends BaseEntity {
 
 	@Id
 	@GeneratedValue(generator = "uuid2", strategy = GenerationType.IDENTITY)

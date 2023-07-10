@@ -11,7 +11,6 @@ import org.springframework.data.domain.Pageable;
 
 public interface PermissionService {
 
-
 	ResponseModelDTO createNewPermission(PermissionCreateDTO permissionCreateDTO);
 
 	ResponseModelDTO updateById(UUID id, PermissionCreateDTO permissionCreateDTO) throws NotFoundException;
