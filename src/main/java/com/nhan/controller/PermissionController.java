@@ -36,13 +36,13 @@ public class PermissionController {
 	private PermissionService permissionService;
 	
 	@GetMapping
-	@Operation(summary = "Get all permissions")
+	@Operation(summary = "Find all permissions")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Find all equipments successfully", content = @Content(mediaType = "application/json",
 					schema = @Schema(implementation = ResponseModelDTO.class))),
 
 	})
-	public ResponseEntity<ResponsePageDTO> getAll(
+	public ResponseEntity<ResponsePageDTO> findAll(
 			@RequestParam(name = "keyword", defaultValue = "") String keyword,
 			@RequestParam(name = "page", defaultValue = "0") int page, //page number
 			@RequestParam(name = "limit", defaultValue = "20") int limit, //page size
