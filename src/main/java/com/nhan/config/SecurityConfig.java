@@ -62,6 +62,7 @@ public class SecurityConfig {
 				.antMatchers("/api/v1/auth/logout").authenticated()
 				.antMatchers("/api/v1/auth/**").permitAll()
 				.antMatchers(HttpMethod.GET, "/api/v1/product-categories").permitAll()
+				.antMatchers(HttpMethod.GET, "/api/v1/product-brands").permitAll()
 				.anyRequest().authenticated()
 				.and().exceptionHandling().authenticationEntryPoint(authenticationEntryPoint)
 				.and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
