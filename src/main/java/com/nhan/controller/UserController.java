@@ -38,9 +38,9 @@ public class UserController {
 	private AppUserService appUserService;
 
 	@GetMapping
-	@Operation(summary = "Get all users")
+	@Operation(summary = "Find all users")
 	@PreAuthorize("hasAuthority('SUPER_ADMIN')")
-	public ResponseEntity<ResponsePageDTO> getAll(
+	public ResponseEntity<ResponsePageDTO> findAll(
 			@RequestParam(name = "keyword", defaultValue = "") String keyword,
 			@RequestParam(name = "page", defaultValue = "0") int page, //page number
 			@RequestParam(name = "limit", defaultValue = "20") int limit, //page size

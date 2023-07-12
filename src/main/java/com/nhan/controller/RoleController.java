@@ -33,9 +33,9 @@ public class RoleController {
 	private RoleService roleService;
 	
 	@GetMapping
-	@Operation(summary = "Get all roles")
+	@Operation(summary = "Find all roles")
 	@PreAuthorize("hasAuthority('SUPER_ADMIN')")
-	public ResponseEntity<?> getAll(
+	public ResponseEntity<?> findAll(
 			@RequestParam(name = "page", defaultValue = "0") int page, //page number
 			@RequestParam(name = "limit", defaultValue = "20") int limit, //page size
 			@RequestParam(name = "orderBy", defaultValue = "name") String orderBy, //database field
@@ -49,7 +49,7 @@ public class RoleController {
 	}
 	
 	@GetMapping("/{id}")
-	@Operation(summary = "Get a role")
+	@Operation(summary = "Find a role")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Find a role successfully", content = @Content(mediaType = "application/json",
 					schema = @Schema(implementation = ResponseModelDTO.class))),
