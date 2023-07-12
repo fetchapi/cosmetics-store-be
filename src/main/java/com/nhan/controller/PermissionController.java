@@ -38,11 +38,24 @@ public class PermissionController {
 	@GetMapping
 	@Operation(summary = "Find all permissions")
 	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "Find all equipments successfully", content = @Content(mediaType = "application/json",
+			@ApiResponse(responseCode = "200", description = "Find all permissions successfully", content = @Content(mediaType = "application/json",
 					schema = @Schema(implementation = ResponseModelDTO.class))),
 
 	})
-	public ResponseEntity<ResponsePageDTO> findAll(
+	public ResponseEntity<ResponseModelDTO> findAll() {
+
+		return ResponseEntity.ok().body(permissionService.findAll());
+
+	}
+
+	@GetMapping("/pagination")
+	@Operation(summary = "Find all permissions with pagination")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Find all permissions with pagination successfully", content = @Content(mediaType = "application/json",
+					schema = @Schema(implementation = ResponsePageDTO.class))),
+
+	})
+	public ResponseEntity<ResponsePageDTO> findAllWithPagination(
 			@RequestParam(name = "keyword", defaultValue = "") String keyword,
 			@RequestParam(name = "page", defaultValue = "0") int page, //page number
 			@RequestParam(name = "limit", defaultValue = "20") int limit, //page size
@@ -51,10 +64,9 @@ public class PermissionController {
 	) {
 
 		Sort sort = Sort.by(sortBy.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC, orderBy);
-
 		Pageable pageable = PageRequest.of(page, limit, sort);
-		return ResponseEntity.ok().body(permissionService.findAll(keyword, pageable));
 
+		return ResponseEntity.ok().body(permissionService.findAll(keyword, pageable));
 	}
 	
 	@PostMapping
