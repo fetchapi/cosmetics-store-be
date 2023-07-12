@@ -69,8 +69,25 @@ public class PermissionServiceImpl implements PermissionService {
 	}
 
 	@Override
+	public ResponseModelDTO findAll() {
+		List<Permission> permissionList = permissionRepository.findAll();
+
+		List<PermissionDetailDTO> permissionDetailDTOList = new ArrayList<>();
+
+		for(Permission permission : permissionList) {
+			PermissionDetailDTO permissionDetailDTO = permissionMapper.fromEntityToDetail(permission);
+			permissionDetailDTOList.add(permissionDetailDTO);
+		}
+
+		return ResponseModelDTO.builder()
+				.data(permissionDetailDTOList)
+				.isSuccess(true)
+				.build();
+	}
+
+	@Override
 	public ResponsePageDTO findAll(String keyword, Pageable pageable) {
-		Page<Permission> permissionPage = permissionRepository.findAll("%" + keyword + "%", pageable);
+		Page<Permission> permissionPage = permissionRepository.findAll(keyword, pageable);
 
 		List<PermissionDetailDTO> permissionDetailDTOList = new ArrayList<>();
 

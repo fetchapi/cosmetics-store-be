@@ -16,7 +16,7 @@ import com.nhan.model.entity.permission.Permission;
 @Repository
 public interface PermissionRepository extends JpaRepository<Permission, UUID> {
 
-	@Query(value = "SELECT p FROM Permission p WHERE unaccent(lower(p.name)) LIKE unaccent(lower(:keyword))")
+	@Query(value = "SELECT p FROM Permission p WHERE lower(unaccent(p.name)) LIKE lower(concat('%', unaccent(:keyword), '%'))")
 	Page<Permission> findAll(String keyword, Pageable pageable);
 
 	Optional<Permission> findByCode(String code);

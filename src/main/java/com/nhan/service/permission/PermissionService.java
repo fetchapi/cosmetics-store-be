@@ -17,6 +17,8 @@ public interface PermissionService {
 
 	ResponseModelDTO findById(UUID id) throws NotFoundException;
 
+	ResponseModelDTO findAll();
+
 	ResponsePageDTO findAll(String keyword, Pageable pageable);
 
 	void softDeleteById(UUID id) throws NotFoundException;
