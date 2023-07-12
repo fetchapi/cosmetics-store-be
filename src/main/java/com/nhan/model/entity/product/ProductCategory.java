@@ -9,6 +9,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -38,5 +39,8 @@ public class ProductCategory extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
     private ProductCategory productCategory;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "productCategory")
+    private List<Product> products;
 
 }

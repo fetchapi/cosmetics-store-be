@@ -29,6 +29,9 @@ public class ProductImage extends BaseEntity {
     @Column(name = "url")
     private String url;
 
+    @Column(name = "public_id") // Cloudinary
+    private String publicId;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
     private Product product;

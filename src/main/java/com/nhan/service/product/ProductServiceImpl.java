@@ -5,17 +5,17 @@ import com.nhan.exception.NotFoundException;
 import com.nhan.file.CloudinaryService;
 import com.nhan.mapper.product.ProductBrandMapper;
 import com.nhan.mapper.product.ProductCategoryMapper;
+import com.nhan.mapper.product.ProductImageMapper;
 import com.nhan.mapper.product.ProductMapper;
-import com.nhan.model.dto.product.ProductBasicDTO;
-import com.nhan.model.dto.product.ProductCreateDTO;
-import com.nhan.model.dto.product.ProductDetailDTO;
-import com.nhan.model.dto.product.ProductUpdateDTO;
+import com.nhan.model.dto.product.*;
+import com.nhan.model.dto.product.productImage.ProductImageBasicDTO;
 import com.nhan.model.dto.response.CloudinaryResponseDTO;
 import com.nhan.model.dto.response.ResponseModelDTO;
 import com.nhan.model.dto.response.ResponsePageDTO;
 import com.nhan.model.entity.product.Product;
 import com.nhan.model.entity.product.ProductBrand;
 import com.nhan.model.entity.product.ProductCategory;
+import com.nhan.model.entity.product.ProductImage;
 import com.nhan.repository.product.ProductBrandRepository;
 import com.nhan.repository.product.ProductCategoryRepository;
 import com.nhan.repository.product.ProductRepository;
@@ -54,6 +54,9 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private ProductBrandMapper productBrandMapper;
+
+    @Autowired
+    private ProductImageMapper productImageMapper;
 
     @Autowired
     private CloudinaryService cloudinaryService;
@@ -118,8 +121,12 @@ public class ProductServiceImpl implements ProductService {
 
         productRepository.save(product);
 
+        ProductBasicDTO productBasicDTO = productMapper.fromEntityToBasic(product);
+        productBasicDTO.setCategoryId(productCategoryId);
+        productBasicDTO.setBrandId(productBrandId);
+
         return ResponseModelDTO.builder()
-                .data(productMapper.fromEntityToBasic(product))
+                .data(productBasicDTO)
                 .isSuccess(true)
                 .build();
     }
@@ -128,11 +135,14 @@ public class ProductServiceImpl implements ProductService {
     public ResponsePageDTO findAll(String keyword, Pageable pageable) {
         Page<Product> productPage = productRepository.findAll(keyword, pageable);
 
-        List<ProductBasicDTO> productBasicDTOS = new ArrayList<>();
+        List<ProductFilterDetailDTO> productBasicDTOS = new ArrayList<>();
 
         for(Product product : productPage.getContent()) {
-            ProductBasicDTO productBasicDTO = productMapper.fromEntityToBasic(product);
-            productBasicDTOS.add(productBasicDTO);
+            ProductFilterDetailDTO productFilterDetailDTO = productMapper.fromEntityToFilterDetail(product);
+            productFilterDetailDTO.setProductCategory(productCategoryMapper.fromEntityToBasic(product.getProductCategory()));
+            productFilterDetailDTO.setProductBrand(productBrandMapper.fromEntityToDetail(product.getProductBrand()));
+
+            productBasicDTOS.add(productFilterDetailDTO);
         }
 
         return ResponsePageDTO.builder()
@@ -148,15 +158,35 @@ public class ProductServiceImpl implements ProductService {
     public ResponsePageDTO filterByCategoryList(List<UUID> uuids, Pageable pageable) {
         Page<Product> productPage = productRepository.filterByCategoryList(uuids, pageable);
 
-        List<ProductBasicDTO> productBasicDTOS = new ArrayList<>();
+        List<ProductFilterBasicDTO> productFilterBasicDTOS = new ArrayList<>();
 
         for(Product product : productPage.getContent()) {
-            ProductBasicDTO productBasicDTO = productMapper.fromEntityToBasic(product);
-            productBasicDTOS.add(productBasicDTO);
+            ProductFilterBasicDTO productFilterBasicDTO = productMapper.fromEntityToFilterBasic(product);
+            productFilterBasicDTOS.add(productFilterBasicDTO);
         }
 
         return ResponsePageDTO.builder()
-                .data(productBasicDTOS)
+                .data(productFilterBasicDTOS)
+                .limit(productPage.getSize())
+                .currentPage(productPage.getNumber())
+                .totalItems(productPage.getTotalElements())
+                .totalPages(productPage.getTotalPages())
+                .build();
+    }
+
+    @Override
+    public ResponsePageDTO searchProduct(String keyword, Pageable pageable) {
+        Page<Product> productPage = productRepository.searchProduct(keyword, pageable);
+
+        List<ProductFilterBasicDTO> productFilterBasicDTOS = new ArrayList<>();
+
+        for(Product product : productPage.getContent()) {
+            ProductFilterBasicDTO productFilterBasicDTO = productMapper.fromEntityToFilterBasic(product);
+            productFilterBasicDTOS.add(productFilterBasicDTO);
+        }
+
+        return ResponsePageDTO.builder()
+                .data(productFilterBasicDTOS)
                 .limit(productPage.getSize())
                 .currentPage(productPage.getNumber())
                 .totalItems(productPage.getTotalElements())
@@ -167,11 +197,18 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ResponseModelDTO findById(UUID id) throws NotFoundException {
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Not product brand with id: " + id));
+                .orElseThrow(() -> new NotFoundException("Not found product with id: " + id));
 
         ProductDetailDTO productDetailDTO = productMapper.fromEntityToDetail(product);
         productDetailDTO.setProductCategory(productCategoryMapper.fromEntityToBasic(product.getProductCategory()));
         productDetailDTO.setProductBrand(productBrandMapper.fromEntityToDetail(product.getProductBrand()));
+
+        List<ProductImageBasicDTO> productImageBasicDTOS = new ArrayList<>();
+        for(ProductImage productImage : product.getProductImages()) {
+            productImageBasicDTOS.add(productImageMapper.fromEntityToBasic(productImage));
+        }
+
+        productDetailDTO.setImages(productImageBasicDTOS);
 
         return ResponseModelDTO.builder()
                 .data(productDetailDTO)
@@ -182,7 +219,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ResponseModelDTO updateById(UUID id, ProductUpdateDTO productUpdateDTO) throws NotFoundException {
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Not product brand with id: " + id));
+                .orElseThrow(() -> new NotFoundException("Not found product with id: " + id));
 
         UUID productCategoryId = productUpdateDTO.getProductCategoryId();
         UUID productBrandId = productUpdateDTO.getProductBrandId();
@@ -213,8 +250,12 @@ public class ProductServiceImpl implements ProductService {
 
         productRepository.save(product);
 
+        ProductBasicDTO productBasicDTO = productMapper.fromEntityToBasic(product);
+        productBasicDTO.setCategoryId(productCategoryId);
+        productBasicDTO.setBrandId(productBrandId);
+
         return ResponseModelDTO.builder()
-                .data(productMapper.fromEntityToBasic(product))
+                .data(productBasicDTO)
                 .isSuccess(true)
                 .build();
     }

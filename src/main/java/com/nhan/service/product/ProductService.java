@@ -18,6 +18,8 @@ public interface ProductService {
 
     ResponsePageDTO filterByCategoryList(List<UUID> uuids, Pageable pageable);
 
+    ResponsePageDTO searchProduct(String keyword, Pageable pageable);
+
     ResponseModelDTO findById(UUID id) throws NotFoundException;
 
     ResponseModelDTO updateById(UUID id, ProductUpdateDTO productUpdateDTO) throws NotFoundException;

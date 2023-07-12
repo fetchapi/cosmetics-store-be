@@ -75,6 +75,26 @@ public class ProductController {
         return ResponseEntity.ok().body(productService.filterByCategoryList(uuids, pageable));
     }
 
+    @GetMapping("/search")
+    @Operation(summary = "Search products")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Search products successfully", content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = ResponsePageDTO.class))),
+
+    })
+    public ResponseEntity<?> searchProduct(
+            @RequestParam(name = "keyword", defaultValue = "") String keyword,
+            @RequestParam(name = "page", defaultValue = "0") int page, //page number
+            @RequestParam(name = "limit", defaultValue = "20") int limit, //page size
+            @RequestParam(name = "orderBy", defaultValue = "name") String orderBy, //database field
+            @RequestParam(name = "sortBy", defaultValue = "asc") String sortBy
+    ) {
+        Sort sort = Sort.by(sortBy.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC, orderBy);
+        Pageable pageable = PageRequest.of(page, limit, sort);
+
+        return ResponseEntity.ok().body(productService.searchProduct(keyword, pageable));
+    }
+
     @GetMapping("/{id}")
     @Operation(summary = "Find a product")
     @ApiResponses(value = {
@@ -85,22 +105,6 @@ public class ProductController {
     public ResponseEntity<?> findById(@PathVariable UUID id) throws NotFoundException {
 
         return ResponseEntity.ok().body(productService.findById(id));
-    }
-
-    @PutMapping("/{id}")
-    @Operation(summary = "Update a product")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Update a product successfully", content = @Content(mediaType = "application/json",
-                    schema = @Schema(implementation = ResponseModelDTO.class))),
-            @ApiResponse(responseCode = "404", description = "Not Found")
-
-    })
-    @PreAuthorize("hasAuthority('SUPER_ADMIN') || hasPermission('PRODUCT', 'PRODUCT_EDIT')")
-    public ResponseEntity<?> updateById(
-            @PathVariable UUID id,
-            @Valid @RequestBody ProductUpdateDTO productUpdateDTO) throws NotFoundException {
-
-        return ResponseEntity.ok().body(productService.updateById(id, productUpdateDTO));
     }
 
     @PostMapping()
@@ -117,6 +121,22 @@ public class ProductController {
             @RequestPart MultipartFile image) throws IOException, NotFoundException {
 
         return ResponseEntity.ok().body(productService.createNewProduct(productCreateDTO, image));
+    }
+
+    @PutMapping("/{id}")
+    @Operation(summary = "Update a product")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Update a product successfully", content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = ResponseModelDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Not Found")
+
+    })
+    @PreAuthorize("hasAuthority('SUPER_ADMIN') || hasPermission('PRODUCT', 'PRODUCT_EDIT')")
+    public ResponseEntity<?> updateById(
+            @PathVariable UUID id,
+            @Valid @RequestBody ProductUpdateDTO productUpdateDTO) throws NotFoundException {
+
+        return ResponseEntity.ok().body(productService.updateById(id, productUpdateDTO));
     }
 
     @DeleteMapping("/{id}")
